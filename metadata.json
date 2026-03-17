@@ -1,0 +1,7 @@
+{
+  "name": "Bakshiganj Auto Registration System",
+  "description": "An online auto-rickshaw registration and tracking system for Bakshiganj to prevent theft and ensure security.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

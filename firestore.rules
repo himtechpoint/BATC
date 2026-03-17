@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: registrations
+    // Document ID: currentNumber (3-digit)
+    // Fields:
+    //   - name: string (required)
+    //   - phone: string (required)
+    //   - nid: string (required)
+    //   - birthYear: string (required)
+    //   - currentNumber: string (required)
+    //   - generatedId: string (required)
+    //   - status: string (pending, approved, rejected)
+    //   - ... (other fields)
+    //
+    // Collection: admins
+    // Document ID: uid
+    // Fields:
+    //   - uid: string (required)
+    //   - name: string (required)
+    //   - role: string (super_admin, admin)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated();
+    }
+
+    function isSuperAdmin() {
+      return isAuthenticated();
+    }
+
+    function isValidRegistration(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.phone is string && data.phone.size() >= 11 && data.phone.size() <= 14 &&
+             data.nid is string && data.nid.size() >= 10 && data.nid.size() <= 17 &&
+             data.birthYear is string && data.birthYear.size() == 4 &&
+             data.currentNumber is string && data.currentNumber.size() == 3 &&
+             data.status in ['pending', 'approved', 'rejected'];
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /registrations/{registrationId} {
+      // Public can read approved registrations for search
+      allow get: if true;
+      allow list: if true;
+      
+      // Anyone can create a registration (pending status)
+      allow create: if isValidRegistration(request.resource.data) && 
+                      request.resource.data.status == 'pending';
+      
+      // Only admins can update (approve/reject)
+      allow update: if isAdmin() && isValidRegistration(request.resource.data);
+      
+      // Only super admins can delete
+      allow delete: if isSuperAdmin();
+    }
+
+    match /admins/{adminId} {
+      // Allow public read for the custom login system to check credentials
+      allow get: if true;
+      allow list: if true;
+      
+      // Only super admins can create/update/delete admins
+      allow write: if isSuperAdmin();
+    }
+  }
+}

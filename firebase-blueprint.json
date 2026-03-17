@@ -1,0 +1,64 @@
+{
+  "entities": {
+    "Registration": {
+      "title": "Auto Registration",
+      "description": "Registration details for auto-rickshaws in Bakshiganj.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Owner/Driver Name" },
+        "phone": { "type": "string", "description": "Phone Number" },
+        "fatherName": { "type": "string", "description": "Father's Name" },
+        "motherName": { "type": "string", "description": "Mother's Name" },
+        "emergencyPhone": { "type": "string", "description": "Emergency Contact Number" },
+        "nid": { "type": "string", "description": "NID Number" },
+        "birthYear": { "type": "string", "description": "Year of Birth" },
+        "address": { "type": "string", "description": "Detailed Address" },
+        "union": { "type": "string", "description": "Union Name" },
+        "ward": { "type": "string", "description": "Ward Number" },
+        "village": { "type": "string", "description": "Village Name" },
+        "vehicleName": { "type": "string", "description": "Vehicle Name" },
+        "currentNumber": { "type": "string", "description": "3-digit Current Number" },
+        "color": { "type": "string", "description": "Vehicle Color" },
+        "bodyNumber": { "type": "string", "description": "Body Number (optional)" },
+        "batteryModel": { "type": "string", "description": "Battery Model" },
+        "route": { "type": "string", "description": "Route of Operation" },
+        "vehicleType": { "type": "string", "description": "Type of Auto (Big/Van)" },
+        "specialMark": { "type": "string", "description": "Any Special Identifying Mark" },
+        "vehiclePhotoUrl": { "type": "string", "description": "URL of Vehicle Photo" },
+        "driverPhotoUrl": { "type": "string", "description": "URL of Driver Photo" },
+        "generatedId": { "type": "string", "description": "Generated 5-digit ID (BirthYear last 2 + 3-digit number)" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"], "description": "Approval Status" },
+        "approvedBy": { "type": "string", "description": "Admin UID who approved" },
+        "approvedByName": { "type": "string", "description": "Admin Name who approved" },
+        "approvedAt": { "type": "string", "format": "date-time", "description": "Approval Timestamp" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation Timestamp" }
+      },
+      "required": ["name", "phone", "nid", "birthYear", "currentNumber", "vehicleType"]
+    },
+    "Admin": {
+      "title": "Admin User",
+      "description": "Admin users who can approve registrations.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "name": { "type": "string", "description": "Full Name" },
+        "phone": { "type": "string", "description": "Phone Number" },
+        "designation": { "type": "string", "description": "Designation/Rank" },
+        "role": { "type": "string", "enum": ["super_admin", "admin"], "description": "Admin Role" },
+        "photoUrl": { "type": "string", "description": "Profile Photo URL" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation Timestamp" }
+      },
+      "required": ["uid", "name", "role"]
+    }
+  },
+  "firestore": {
+    "/registrations/{registrationId}": {
+      "schema": "Registration",
+      "description": "Collection of auto registrations."
+    },
+    "/admins/{adminId}": {
+      "schema": "Admin",
+      "description": "Collection of admin users."
+    }
+  }
+}
